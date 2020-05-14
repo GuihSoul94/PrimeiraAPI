@@ -2,7 +2,22 @@ package br.com.api.nova.entidade;
 
 public class Sprites {
 	
-	public String front_default;
+	private String front_default;
+	private String back_default;
+
+	/**
+	 * @return the back_default
+	 */
+	public String getBack_default() {
+		return back_default;
+	}
+
+	/**
+	 * @param back_default the back_default to set
+	 */
+	public void setBack_default(String back_default) {
+		this.back_default = back_default;
+	}
 
 	/**
 	 * @return the front_default

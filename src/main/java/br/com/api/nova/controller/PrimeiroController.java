@@ -56,8 +56,14 @@ public class PrimeiroController {
 	@GetMapping(value ="/pokemon/{nome}")
 	public ResponseEntity buscarPokemon(@PathVariable String nome) throws MalformedURLException, IOException {
 		RestTemplate restTemplate = new RestTemplate();
-		Pokemon result = restTemplate.getForObject("https://pokeapi.co/api/v2/pokemon/"+ nome, Pokemon.class);
-		return ResponseEntity.ok(result);
+		try {
+			Pokemon result = restTemplate.getForObject("https://pokeapi.co/api/v2/pokemon/"+ nome, Pokemon.class);
+			return ResponseEntity.ok(result);
+		} catch (Exception e) {
+		e.printStackTrace();
+		return ResponseEntity.badRequest().body("Erro na consulta! Pokemon inexistente ou inválido!");
+		}
+	
 	}
 	
 	@SuppressWarnings("rawtypes")
