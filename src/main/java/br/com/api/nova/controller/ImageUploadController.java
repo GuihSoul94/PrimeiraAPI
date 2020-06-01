@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import br.com.api.nova.entidade.UploadImagens;
 import br.com.api.nova.repositorio.ImageRepository;
+import br.com.api.nova.services.ImagemService;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
@@ -23,7 +24,8 @@ import br.com.api.nova.repositorio.ImageRepository;
 public class ImageUploadController {
 	
 	@Autowired
-	private ImageRepository repositorio;
+	private ImagemService servico;
+	
 	
 	@SuppressWarnings("rawtypes")
 	@GetMapping
@@ -36,14 +38,16 @@ public class ImageUploadController {
 	public ResponseEntity uploadImage(@RequestParam("imageFile") MultipartFile file) throws IOException {
 	
 		UploadImagens img = new UploadImagens(file.getOriginalFilename(), file.getContentType(), file.getBytes());
-			repositorio.save(img);
-			
-			return ResponseEntity.ok("Imagem salva com sucesso!");
+		boolean resposta = servico.salvar(img);
+			if(resposta) {
+				return ResponseEntity.ok("Imagem salva com sucesso!");
+			} else {
+				return ResponseEntity.badRequest().body("Erro ao salvar imagem!");			}
 	}
 	@GetMapping(path = { "/get/{id}" })
 	public UploadImagens getImage(@PathVariable("id") int id) throws IOException {
 		Long busca = (long) id;
-		final Optional<UploadImagens> retrievedImage = repositorio.findById(busca);
+		final Optional<UploadImagens> retrievedImage = servico.buscarPorId(busca);
 		UploadImagens img = new UploadImagens(retrievedImage.get().getName(), retrievedImage.get().getType(),retrievedImage.get().getPicByte());
 		return img;
 	}
