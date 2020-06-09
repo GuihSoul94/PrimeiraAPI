@@ -35,7 +35,7 @@ public class UploadImagens {
 	@Column(name = "type")
 	private String type;
 	
-	@Column(name = "picByte", length = 1000)
+	@Column(name = "picbyte", length = 1000)
 	private byte[] picByte;
 
 	@Override

@@ -2,10 +2,15 @@ package br.com.api.nova.controller;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -51,29 +56,35 @@ public class PrimeiroController {
 		cont = servico.adicionarContato(contato);
 		return ResponseEntity.ok("Contato inserido com sucesso!" + contato);
 	}
-	
-	@SuppressWarnings({ "rawtypes"})
-	@GetMapping(value ="/pokemon/{nome}")
+
+	@SuppressWarnings({ "rawtypes", "unused" })
+	@GetMapping(value = "/pokemon/{nome}")
 	public ResponseEntity buscarPokemon(@PathVariable String nome) throws MalformedURLException, IOException {
 		RestTemplate restTemplate = new RestTemplate();
+		HttpHeaders headers = new HttpHeaders();
+		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+		headers.add("user-agent",
+				"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36");
+
+		HttpEntity<String> entity = new HttpEntity<String>("parameters", headers);
 		try {
-			Pokemon result = restTemplate.getForObject("https://pokeapi.co/api/v2/pokemon/"+ nome, Pokemon.class);
+			ResponseEntity<Pokemon> result = restTemplate.exchange("https://pokeapi.co/api/v2/pokemon/" + nome,HttpMethod.GET,entity, Pokemon.class);
 			return ResponseEntity.ok(result);
 		} catch (Exception e) {
-		e.printStackTrace();
-		return ResponseEntity.badRequest().body("Erro na consulta! Pokemon inexistente ou inválido!");
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body("Erro na consulta! Pokemon inexistente ou inválido!");
 		}
-	
+
 	}
-	
+
 	@SuppressWarnings("rawtypes")
-	@GetMapping(value="/cep/{cep}", produces = "application/JSON")
+	@GetMapping(value = "/cep/{cep}", produces = "application/JSON")
 	public ResponseEntity buscarCEP(@PathVariable String cep) {
-		String url = "http://viacep.com.br/ws/"+cep+"/json";
+		String url = "http://viacep.com.br/ws/" + cep + "/json";
 		RestTemplate template = new RestTemplate();
 		Cep resultado = template.getForObject(url, Cep.class);
 		return ResponseEntity.ok(resultado);
-		
+
 	}
 
 	@SuppressWarnings("rawtypes")
